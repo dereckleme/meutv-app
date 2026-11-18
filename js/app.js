@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var VERSION = '1.1.3';
+  var VERSION = '1.1.4';
 
   // ---------- util ----------
   var $ = function (s) { return document.querySelector(s); };
@@ -457,7 +457,7 @@
     document.body.style.transformOrigin = '0 0';
     document.body.style.transform = Math.abs(k - 1) < 0.01 ? '' : 'scale(' + k + ')';
     var v = $('#ver');
-    if (v) v.textContent = 'v' + VERSION + '  ·  ' + w + 'x' + h + ' (inner ' + window.innerWidth + 'x' + window.innerHeight + ', tela ' + (screen.width || '?') + 'x' + (screen.height || '?') + ', dpr ' + (window.devicePixelRatio || 1) + ')  ·  escala ' + k.toFixed(2);
+    if (v) v.textContent = 'v' + VERSION;
   }
   window.addEventListener('resize', fit); fit();
   var saved = store('cfg');
