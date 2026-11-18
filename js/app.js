@@ -395,4 +395,5 @@
     }).catch(function () { $('#login-msg').textContent = 'Não foi possível entrar automaticamente. Tente novamente.'; focusFirst(); });
   }
   focusFirst();
+  if (!saved && $('#in-server').value && $('#in-user').value) $('#in-pass').focus();
 })();
