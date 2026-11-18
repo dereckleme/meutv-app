@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920, height=1080">
+  <title>Meu IPTV</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="$WEBAPIS/webapis/webapis.js"></script>
+</head>
+<body>
+  <object id="av-player" type="application/avplay"></object>
+
+  <!-- LOGIN -->
+  <section id="login" class="screen">
+    <h1>Meu IPTV</h1>
+    <p class="hint">Cole a URL M3U completa <b>ou</b> preencha servidor, usuário e senha.</p>
+    <label>URL M3U ou servidor
+      <input id="in-server" class="f" type="text" placeholder="http://servidor:80  ou  http://servidor/get.php?username=..&password=..">
+    </label>
+    <label>Usuário
+      <input id="in-user" class="f" type="text">
+    </label>
+    <label>Senha
+      <input id="in-pass" class="f" type="text">
+    </label>
+    <button id="btn-login" class="f btn">Entrar</button>
+    <div id="login-msg" class="msg"></div>
+  </section>
+
+  <!-- PRINCIPAL -->
+  <section id="main" class="screen hidden">
+    <header>
+      <nav id="tabs">
+        <button class="f tab" data-tab="live">Ao vivo</button>
+        <button class="f tab" data-tab="vod">Filmes</button>
+        <button class="f tab" data-tab="series">Séries</button>
+      </nav>
+      <input id="in-search" class="f" type="text" placeholder="Buscar...">
+      <button id="btn-logout" class="f btn small">Sair</button>
+    </header>
+    <div id="body">
+      <aside id="cats"></aside>
+      <div id="grid"></div>
+    </div>
+    <div id="status"></div>
+  </section>
+
+  <!-- SÉRIE (temporadas / episódios) -->
+  <section id="detail" class="screen hidden">
+    <div id="detail-head"></div>
+    <div id="seasons"></div>
+    <div id="episodes"></div>
+  </section>
+
+  <!-- PLAYER -->
+  <section id="player" class="hidden">
+    <video id="html5" class="hidden"></video>
+    <div id="p-spinner" class="hidden">Carregando...</div>
+    <div id="p-info" class="hidden"></div>
+    <div id="p-error" class="hidden"></div>
+  </section>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

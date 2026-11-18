@@ -1,0 +1,10 @@
+{
+  "name": "meu-iptv-tizen",
+  "version": "1.0.1",
+  "description": "Player IPTV (Xtream Codes / M3U) para Samsung Tizen",
+  "packageType": "app",
+  "appName": "Meu IPTV",
+  "appPath": "index.html",
+  "keys": ["MediaPlay", "MediaPause", "MediaPlayPause", "MediaStop", "MediaFastForward", "MediaRewind", "ChannelUp", "ChannelDown"],
+  "license": "MIT"
+}
