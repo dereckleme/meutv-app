@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>Meu IPTV</title>
+<style>html,body{margin:0;width:1920px;height:1080px;background:#0f1220;color:#fff;font:28px Arial,sans-serif}#m{padding:480px 0;text-align:center}</style>
+</head>
+<body>
+<div id="m">Carregando Meu IPTV...</div>
+<script>
+(function () {
+  // Casca fina: baixa a versão mais recente do app do GitHub Pages a cada abertura.
+  var BASE = 'https://dereckleme.github.io/tv/';
+  var t = Date.now();
+  var m = document.getElementById('m');
+  var x = new XMLHttpRequest();
+  x.open('GET', BASE + 'index.html?t=' + t, true);
+  x.timeout = 20000;
+  x.onload = function () {
+    if (x.status !== 200 || x.responseText.indexOf('id="login"') < 0) return fallback('HTTP ' + x.status);
+    var h = x.responseText
+      .replace('<head>', '<head><base href="' + BASE + '">')
+      .replace('css/style.css', 'css/style.css?t=' + t)
+      .replace('js/app.js', 'js/app.js?t=' + t);
+    document.open(); document.write(h); document.close();
+  };
+  x.onerror = function () { fallback('sem rede'); };
+  x.ontimeout = function () { fallback('tempo esgotado'); };
+  x.send();
+  function fallback(why) {
+    m.textContent = 'Não foi possível buscar a versão online (' + why + '). Abrindo cópia local...';
+    setTimeout(function () { location.replace('index.html'); }, 1500);
+  }
+})();
+</script>
+</body>
+</html>
