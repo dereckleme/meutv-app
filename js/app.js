@@ -284,7 +284,7 @@
       } catch (e) { fail(e.message || String(e)); }
     } else {
       var v = $('#html5'); show(v, true);
-      v.src = url; v.onerror = function () { fail('Erro ao reproduzir (navegador sem suporte ao formato)'); };
+      v.src = url; v.onerror = function () { var c = v.error ? v.error.code : '?'; fail('Erro ao reproduzir (código ' + c + ', player: HTML5, URL: ' + url.replace(/\/(live|movie|series)\/[^\/]+\/[^\/]+\//, '/$1/***/***/') + ')'); };
       v.onplaying = function () { show($('#p-spinner'), false); };
       v.ontimeupdate = function () { curTime = v.currentTime * 1000; duration = (v.duration || 0) * 1000; updateBar(); };
       v.play(); playing = true;
@@ -443,6 +443,12 @@
     }
   } catch (e) {}
 
+  function fit() {
+    var k = Math.min(window.innerWidth / 1920, window.innerHeight / 1080) || 1;
+    document.body.style.transformOrigin = '0 0';
+    document.body.style.transform = k === 1 ? '' : 'scale(' + k + ')';
+  }
+  window.addEventListener('resize', fit); fit();
   var saved = store('cfg');
   if (saved && saved.base) {
     cfg = saved;
