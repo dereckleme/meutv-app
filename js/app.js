@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var VERSION = '1.1.4';
+  var VERSION = '1.1.5';
 
   // ---------- util ----------
   var $ = function (s) { return document.querySelector(s); };
@@ -54,24 +54,43 @@
     return idb().then(function (db) { db.transaction('kv', 'readwrite').objectStore('kv').put(v, k); }).catch(function () {});
   }
 
-  var preloaded = {}, pq = [], active = 0, MAXC = 6;
-  function preload(items) {
-    items.forEach(function (i) {
-      var u = i.stream_icon || i.cover;
-      if (u && !preloaded[u]) { preloaded[u] = 1; pq.push(u); }
-    });
-    pump();
+  // Logos: fila com poucas conexões (hosts de imagem limitam requisições),
+  // cache em memória + IndexedDB (blobs) e repetição em caso de erro.
+  var memLogo = {}, lq = [], lactive = 0, LMAX = 3, lgen = 0;
+  function setLogo(img, url) {
+    if (!url) { img.style.visibility = 'hidden'; return; }
+    if (memLogo[url]) { img.src = memLogo[url]; return; }
+    lq.push({ img: img, url: url, gen: lgen, tries: 0 });
+    lpump();
   }
-  function pump() {
-    while (active < MAXC && pq.length) {
-      (function (u) {
-        active++;
-        var im = new Image();
-        var done = function () { active--; pump(); };
-        im.onload = done; im.onerror = done;
-        im.src = u;
-      })(pq.shift());
-    }
+  function resetLogos() { lgen++; lq = lq.filter(function (j) { return false; }); }
+  function lpump() {
+    while (lactive < LMAX && lq.length) loadLogo(lq.shift());
+  }
+  function loadLogo(j) {
+    if (memLogo[j.url]) { j.img.src = memLogo[j.url]; return; }
+    lactive++;
+    var done = function () { lactive--; lpump(); };
+    idbGet('logo:' + j.url).then(function (blob) {
+      if (blob) { memLogo[j.url] = URL.createObjectURL(blob); j.img.src = memLogo[j.url]; return done(); }
+      var x = new XMLHttpRequest();
+      x.open('GET', j.url, true); x.responseType = 'blob'; x.timeout = 15000;
+      x.onload = function () {
+        if (x.status === 200 && x.response && x.response.size) {
+          idbSet('logo:' + j.url, x.response);
+          memLogo[j.url] = URL.createObjectURL(x.response); j.img.src = memLogo[j.url];
+          return done();
+        }
+        retry();
+      };
+      x.onerror = x.ontimeout = function () { retry(); };
+      x.send();
+      function retry() {
+        if (j.tries++ < 2) { setTimeout(function () { lq.push(j); lpump(); }, 1500 * j.tries); }
+        else { j.img.src = j.url; }   // última tentativa: deixa o navegador carregar direto (sem CORS)
+        done();
+      }
+    });
   }
 
   // ---------- estado ----------
@@ -154,7 +173,6 @@
     addCat('*', 'Todos (' + d.items.length + ')');
     d.cats.forEach(function (c) { addCat(String(c.category_id), c.category_name); });
     applyFilter();
-    preload(d.items);
   }
   function markCats() {
     document.querySelectorAll('.cat').forEach(function (b) { b.classList.toggle('active', b.dataset.id === curCat); });
@@ -167,6 +185,7 @@
       return !q || String(i.name || '').toLowerCase().indexOf(q) >= 0;
     });
     shown = 0;
+    resetLogos();
     $('#grid').innerHTML = '';
     renderMore();
     $('#status').textContent = curList.length + ' itens';
@@ -189,7 +208,7 @@
     var live = tab === 'live';
     var c = el('button', 'f card' + (live ? ' live' : ''));
     var img = el('img');
-    img.src = item.stream_icon || item.cover || '';
+    setLogo(img, item.stream_icon || item.cover || '');
     img.onerror = function () { img.style.visibility = 'hidden'; };
     c.appendChild(img);
     c.appendChild(el('div', 't', item.name));
