@@ -12,55 +12,84 @@
 
   <!-- LOGIN -->
   <section id="login" class="screen">
-    <h1>Meu IPTV</h1>
-    <p class="hint">Cole a URL M3U completa <b>ou</b> preencha servidor, usuário e senha.</p>
-    <label>URL M3U ou servidor
-      <input id="in-server" class="f" type="text" value="http://tridcdn.online:80" placeholder="http://servidor:80  ou  http://servidor/get.php?username=..&password=..">
-    </label>
-    <label>Usuário
-      <input id="in-user" class="f" type="text" value="231889429">
-    </label>
-    <label>Senha
-      <input id="in-pass" class="f" type="text">
-    </label>
-    <button id="btn-login" class="f btn">Entrar</button>
-    <div id="login-msg" class="msg"></div>
+    <div class="glow g1"></div><div class="glow g2"></div>
+    <div class="login-hero">
+      <div class="mark big"><i></i></div>
+      <h1 class="wordmark">Meu<span>IPTV</span></h1>
+      <p class="tagline">Canais ao vivo, filmes e séries na sua TV.</p>
+      <ul class="features">
+        <li><b class="dot live"></b>Ao vivo</li>
+        <li><b class="dot"></b>Filmes</li>
+        <li><b class="dot"></b>Séries</li>
+      </ul>
+    </div>
+    <div class="login-card">
+      <h2>Entrar</h2>
+      <p class="hint">Use a URL M3U completa ou servidor, usuário e senha.</p>
+      <label class="field"><span>Servidor ou URL M3U</span>
+        <input id="in-server" class="f" type="text" value="http://tridcdn.online:80" placeholder="http://servidor:80">
+      </label>
+      <label class="field"><span>Usuário</span>
+        <input id="in-user" class="f" type="text" value="231889429">
+      </label>
+      <label class="field"><span>Senha</span>
+        <input id="in-pass" class="f" type="text" placeholder="Digite sua senha">
+      </label>
+      <button id="btn-login" class="f btn primary">Entrar</button>
+      <div id="login-msg" class="msg"></div>
+    </div>
   </section>
 
   <!-- PRINCIPAL -->
   <section id="main" class="screen hidden">
     <header>
+      <div class="brand"><div class="mark"><i></i></div><span class="wordmark sm">Meu<span>IPTV</span></span></div>
       <nav id="tabs">
         <button class="f tab" data-tab="live">Ao vivo</button>
         <button class="f tab" data-tab="vod">Filmes</button>
         <button class="f tab" data-tab="series">Séries</button>
       </nav>
-      <input id="in-search" class="f" type="text" placeholder="Buscar...">
-      <button id="btn-logout" class="f btn small">Sair</button>
+      <div class="search"><b class="ico"></b><input id="in-search" class="f" type="text" placeholder="Buscar"></div>
+      <div class="clock" id="clock"></div>
+      <button id="btn-logout" class="f btn ghost">Sair</button>
     </header>
     <div id="body">
-      <aside id="cats"></aside>
-      <div id="grid"></div>
+      <aside id="cats" class="scroller"></aside>
+      <div id="content">
+        <div id="crumb"><h2 id="crumb-title"></h2><span id="status"></span></div>
+        <div id="grid" class="scroller"></div>
+      </div>
     </div>
-    <div id="status"></div>
   </section>
 
-  <!-- SÉRIE (temporadas / episódios) -->
+  <!-- SÉRIE -->
   <section id="detail" class="screen hidden">
-    <div id="detail-head"></div>
-    <div id="seasons"></div>
-    <div id="episodes"></div>
+    <div id="d-bg"></div>
+    <div class="d-shade"></div>
+    <div class="d-wrap">
+      <div class="d-top">
+        <div class="d-poster"><img id="d-cover" alt=""></div>
+        <div class="d-info">
+          <div class="badge">SÉRIE</div>
+          <h1 id="d-title"></h1>
+          <div id="d-meta" class="meta"></div>
+          <p id="d-plot"></p>
+        </div>
+      </div>
+      <div id="seasons"></div>
+      <div id="episodes" class="scroller"></div>
+    </div>
   </section>
 
   <!-- PLAYER -->
   <section id="player" class="hidden">
     <video id="html5" class="hidden"></video>
-    <div id="p-spinner" class="hidden">Carregando...</div>
+    <div id="p-spinner" class="hidden"><div class="spin"></div><span>Carregando</span></div>
     <div id="p-info" class="hidden"></div>
     <div id="p-error" class="hidden"></div>
   </section>
 
-  <div id="ver">v1.1.5</div>
+  <div id="ver"></div>
   <script src="js/app.js"></script>
 </body>
 </html>
