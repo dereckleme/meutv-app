@@ -8,7 +8,7 @@ body.playing .screen { display: none; }
 .hidden { display: none !important; }
 #av-player { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
 
-.screen { position: absolute; inset: 0; background: #0f1220; }
+.screen { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #0f1220; }
 .f { outline: none; border: 3px solid transparent; }
 .f:focus, .f.focus { border-color: #4da3ff; box-shadow: 0 0 0 4px rgba(77,163,255,.45); }
 
@@ -24,8 +24,11 @@ input { display: block; width: 100%; margin-top: 8px; padding: 18px 20px; font-s
 .msg { margin-top: 24px; color: #ffb4b4; font-size: 24px; min-height: 40px; }
 
 /* main */
-header { height: 100px; display: flex; align-items: center; gap: 24px; padding: 0 40px; background: #161a2e; }
-#tabs { display: flex; gap: 16px; flex: 1; }
+header { height: 100px; display: flex; align-items: center; padding: 0 40px; background: #161a2e; }
+#tabs { display: flex; flex: 1; }
+#tabs .tab { margin-right: 16px; }
+header > * { margin-right: 24px; }
+header > :last-child { margin-right: 0; }
 .tab { padding: 14px 40px; font-size: 30px; border-radius: 10px; background: #232845; color: #fff; }
 .tab.active { background: #2a5fd0; }
 #in-search { width: 520px; margin: 0; }
@@ -34,9 +37,11 @@ header { height: 100px; display: flex; align-items: center; gap: 24px; padding: 
 .cat { display: block; width: 100%; text-align: left; padding: 14px 18px; margin-bottom: 8px; font-size: 26px;
   background: transparent; color: #cfd6f0; border-radius: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cat.active { background: #232845; color: #fff; }
-#grid { flex: 1; padding: 24px; overflow: hidden; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 18px; }
+#grid { flex: 1; padding: 24px; overflow: hidden; display: flex; flex-wrap: wrap; align-content: flex-start; }
+#grid > * { margin: 0 18px 18px 0; }
 .card { width: 210px; height: 290px; background: #1b2036; border-radius: 10px; overflow: hidden; position: relative; cursor: pointer; }
-.card.live { width: 300px; height: 120px; display: flex; align-items: center; gap: 12px; padding: 10px; }
+.card.live { width: 300px; height: 120px; display: flex; align-items: center; padding: 10px; }
+.card.live img { margin-right: 12px; }
 .card img { width: 100%; height: 220px; object-fit: cover; background: #232845; display: block; }
 .card.live img { width: 90px; height: 90px; object-fit: contain; flex: none; }
 .card .t { padding: 8px 10px; font-size: 22px; line-height: 1.2; height: 70px; overflow: hidden; }
@@ -47,14 +52,15 @@ header { height: 100px; display: flex; align-items: center; gap: 24px; padding: 
 /* detalhe da série */
 #detail { padding: 40px 60px; }
 #detail-head { font-size: 44px; margin-bottom: 24px; }
-#seasons { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+#seasons { display: flex; flex-wrap: wrap; margin-bottom: 24px; }
+#seasons .btn { margin: 0 12px 12px 0; }
 #episodes { height: 780px; overflow: hidden; }
 .ep { display: block; width: 1200px; text-align: left; padding: 12px 20px; margin-bottom: 8px; font-size: 26px;
   background: #1b2036; color: #fff; border-radius: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* player */
-#player { position: absolute; inset: 0; }
-#html5 { position: absolute; inset: 0; width: 1920px; height: 1080px; background: #000; }
+#player { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+#html5 { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 1920px; height: 1080px; background: #000; }
 #p-spinner { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(0,0,0,.7); padding: 20px 40px; border-radius: 10px; }
 #p-info { position: absolute; left: 60px; right: 60px; bottom: 60px; padding: 24px 30px; background: rgba(0,0,0,.75); border-radius: 12px; font-size: 30px; }
 #p-info .bar { margin-top: 14px; height: 8px; background: #444; border-radius: 4px; }
