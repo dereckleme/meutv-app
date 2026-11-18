@@ -1,6 +1,6 @@
 {
   "name": "meu-iptv-tizen",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Player IPTV (Xtream Codes / M3U) para Samsung Tizen",
   "packageType": "app",
   "appName": "Meu IPTV",

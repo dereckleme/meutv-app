@@ -260,8 +260,13 @@
     startPlayback(itemUrl(it), it.name);
   }
 
+  var stallTimer;
   function startPlayback(url, name) {
     stopPlayback(true);
+    clearTimeout(stallTimer);
+    stallTimer = setTimeout(function () {
+      if (!$('#p-spinner').classList.contains('hidden')) fail('O stream não respondeu em 20s. Pode ser o limite de conexões da conta (3 simultâneas) ou canal fora do ar');
+    }, 20000);
     view = 'player';
     document.body.classList.add('playing');
     show($('#player'), true); show($('#p-error'), false); show($('#p-spinner'), true);
@@ -279,13 +284,13 @@
           onerror: function (e) { fail('Erro de reprodução: ' + e); }
         });
         avp.prepareAsync(function () {
-          try { duration = avp.getDuration(); avp.play(); playing = true; show($('#p-spinner'), false); } catch (e) { fail(e.message || e); }
+          try { duration = avp.getDuration(); avp.play(); playing = true; clearTimeout(stallTimer); show($('#p-spinner'), false); } catch (e) { fail(e.message || e); }
         }, function (e) { fail('Não foi possível abrir o stream (' + e + ')'); });
       } catch (e) { fail(e.message || String(e)); }
     } else {
       var v = $('#html5'); show(v, true);
       v.src = url; v.onerror = function () { var c = v.error ? v.error.code : '?'; fail('Erro ao reproduzir (código ' + c + ', player: HTML5, URL: ' + url.replace(/\/(live|movie|series)\/[^\/]+\/[^\/]+\//, '/$1/***/***/') + ')'); };
-      v.onplaying = function () { show($('#p-spinner'), false); };
+      v.onplaying = function () { clearTimeout(stallTimer); show($('#p-spinner'), false); };
       v.ontimeupdate = function () { curTime = v.currentTime * 1000; duration = (v.duration || 0) * 1000; updateBar(); };
       v.play(); playing = true;
     }
@@ -305,6 +310,7 @@
 
   function stopPlayback(keepUi) {
     playing = false;
+    if (!keepUi) clearTimeout(stallTimer);
     if (avp) { try { avp.stop(); } catch (e) {} try { avp.close(); } catch (e) {} }
     var v = $('#html5'); try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) {}
     if (!keepUi) { show(v, false); }
