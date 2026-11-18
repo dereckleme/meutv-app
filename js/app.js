@@ -1,5 +1,6 @@
 (function () {
   'use strict';
+  var VERSION = '1.1.3';
 
   // ---------- util ----------
   var $ = function (s) { return document.querySelector(s); };
@@ -450,9 +451,13 @@
   } catch (e) {}
 
   function fit() {
-    var k = Math.min(window.innerWidth / 1920, window.innerHeight / 1080) || 1;
+    var de = document.documentElement;
+    var w = de.clientWidth || window.innerWidth, h = de.clientHeight || window.innerHeight;
+    var k = Math.min(w / 1920, h / 1080) || 1;
     document.body.style.transformOrigin = '0 0';
-    document.body.style.transform = k === 1 ? '' : 'scale(' + k + ')';
+    document.body.style.transform = Math.abs(k - 1) < 0.01 ? '' : 'scale(' + k + ')';
+    var v = $('#ver');
+    if (v) v.textContent = 'v' + VERSION + '  ·  ' + w + 'x' + h + ' (inner ' + window.innerWidth + 'x' + window.innerHeight + ', tela ' + (screen.width || '?') + 'x' + (screen.height || '?') + ', dpr ' + (window.devicePixelRatio || 1) + ')  ·  escala ' + k.toFixed(2);
   }
   window.addEventListener('resize', fit); fit();
   var saved = store('cfg');
