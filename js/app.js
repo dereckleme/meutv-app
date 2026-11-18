@@ -27,6 +27,52 @@
     });
   }
 
+
+  // ---------- cache de listas (IndexedDB) e pré-carga de logos ----------
+  var TTL = 6 * 3600 * 1000;
+  function idb() {
+    return new Promise(function (res, rej) {
+      try {
+        var r = indexedDB.open('iptv', 1);
+        r.onupgradeneeded = function () { r.result.createObjectStore('kv'); };
+        r.onsuccess = function () { res(r.result); };
+        r.onerror = function () { rej(r.error); };
+      } catch (e) { rej(e); }
+    });
+  }
+  function idbGet(k) {
+    return idb().then(function (db) {
+      return new Promise(function (res) {
+        var q = db.transaction('kv').objectStore('kv').get(k);
+        q.onsuccess = function () { res(q.result || null); };
+        q.onerror = function () { res(null); };
+      });
+    }).catch(function () { return null; });
+  }
+  function idbSet(k, v) {
+    return idb().then(function (db) { db.transaction('kv', 'readwrite').objectStore('kv').put(v, k); }).catch(function () {});
+  }
+
+  var preloaded = {}, pq = [], active = 0, MAXC = 6;
+  function preload(items) {
+    items.forEach(function (i) {
+      var u = i.stream_icon || i.cover;
+      if (u && !preloaded[u]) { preloaded[u] = 1; pq.push(u); }
+    });
+    pump();
+  }
+  function pump() {
+    while (active < MAXC && pq.length) {
+      (function (u) {
+        active++;
+        var im = new Image();
+        var done = function () { active--; pump(); };
+        im.onload = done; im.onerror = done;
+        im.src = u;
+      })(pq.shift());
+    }
+  }
+
   // ---------- estado ----------
   var cfg = null;          // {base, user, pass, m3u}
   var tab = 'live';
@@ -77,9 +123,21 @@
     $('#status').textContent = 'Carregando ' + t + '...';
     $('#grid').innerHTML = ''; $('#cats').innerHTML = '';
     var a = { live: ['get_live_categories', 'get_live_streams'], vod: ['get_vod_categories', 'get_vod_streams'], series: ['get_series_categories', 'get_series'] }[t];
-    Promise.all([api(a[0]), api(a[1])]).then(function (r) {
-      data[t] = { cats: r[0] || [], items: r[1] || [] };
-      if (tab === t) renderTab();
+    var key = 'list:' + cfg.user + ':' + t;
+    function fetchFresh() {
+      return Promise.all([api(a[0]), api(a[1])]).then(function (r) {
+        var d = { cats: r[0] || [], items: r[1] || [] };
+        idbSet(key, { ts: Date.now(), d: d });
+        return d;
+      });
+    }
+    idbGet(key).then(function (c) {
+      if (c && c.d && Date.now() - c.ts < TTL) {
+        data[t] = c.d;
+        if (tab === t) renderTab();
+        return;
+      }
+      return fetchFresh().then(function (d) { data[t] = d; if (tab === t) renderTab(); });
     }).catch(function (e) { $('#status').textContent = 'Erro: ' + e.message; });
   }
 
@@ -95,6 +153,7 @@
     addCat('*', 'Todos (' + d.items.length + ')');
     d.cats.forEach(function (c) { addCat(String(c.category_id), c.category_name); });
     applyFilter();
+    preload(d.items);
   }
   function markCats() {
     document.querySelectorAll('.cat').forEach(function (b) { b.classList.toggle('active', b.dataset.id === curCat); });
@@ -129,7 +188,6 @@
     var live = tab === 'live';
     var c = el('button', 'f card' + (live ? ' live' : ''));
     var img = el('img');
-    img.loading = 'lazy';
     img.src = item.stream_icon || item.cover || '';
     img.onerror = function () { img.style.visibility = 'hidden'; };
     c.appendChild(img);
