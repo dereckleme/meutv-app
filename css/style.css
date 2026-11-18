@@ -67,3 +67,6 @@ header > :last-child { margin-right: 0; }
 #p-info .bar i { display: block; height: 8px; background: #4da3ff; border-radius: 4px; width: 0; }
 #p-info small { color: #9aa3c0; font-size: 22px; }
 #p-error { position: absolute; top: 40%; left: 50%; transform: translate(-50%,-50%); background: rgba(160,30,30,.9); padding: 24px 40px; border-radius: 10px; max-width: 1400px; }
+
+#ver { position: absolute; right: 30px; bottom: 8px; font-size: 22px; color: #9aa3c0; z-index: 5; }
+body.playing #ver { display: none; }
